@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/rem.png</file>
+        <file>res/view.png</file>
+        <file>res/view_none.png</file>
+    </qresource>
+</RCC>

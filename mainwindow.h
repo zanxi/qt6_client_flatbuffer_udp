@@ -31,6 +31,7 @@ public slots:
 
     void slot_to_FigureDraw_Visible(int Id);
     void slot_to_FigureDraw_delete(int Id);
+    void setColotFigure(int);
 
 private:
     Ui::MainWindow *ui;

@@ -6,7 +6,7 @@
 #include <QGraphicsItem>
 
 #include "figureviewbutton.h"
-
+#include "tableinfo.h"
 
 namespace Ui {
 class FormInformation;
@@ -30,18 +30,22 @@ signals:
     void hideFigure(int);
     void deleteFig(int);
 
+    void setColotFigure(int Id);
+
 public slots:
 
     void ViewHideFigure(figureInfo); // показать скрыть фигуру
     void DeleteFigure(figureInfo); // удалить фигуру
+    void setLightFigure(int row, int col);
+    void cell_position(QModelIndex);
 
 private:
     Ui::FormInformation *ui;
 
-    QStringList figureTableHeaders;
-    void loadFigureTable();
-    FigureViewButton *getFigureButton(QTableWidget * parent);
+    QStringList figureTableHeaders;        
     QIcon getIcon(QString name);
+
+    TableInfo *tInfo;
 
 };
 

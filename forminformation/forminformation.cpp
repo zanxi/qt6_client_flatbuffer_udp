@@ -12,67 +12,41 @@ FormInformation::FormInformation(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->tableWidget->setRowCount(1);
-    loadFigureTable();
+    tInfo = new TableInfo(this);
+    tInfo->loadFigureTable();
+    tInfo->setStyleSheet("::item:hover { color:rgb(0,0,255) }");
+    tInfo->setRowCount(1);
+    ui->verticalLayout_2->addWidget(tInfo);
 
-    //connect(this,&FigureViewButton::ViewHide,this,SLOT(FormInformation::ViewHideFigure(QString)));
-    //ui->tableWidget->ro
-    //setRowTableRow();
+
+    //connect(tInfo, &TableInfo::setLightFigure, this, &FormInformation::setLightFigure)
+    connect(tInfo, &TableInfo::setLightFigure, this, &FormInformation::setLightFigure);
+    //connect(tInfo->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), key, SLOT(cell_position(QModelIndex)));
 }
+
+
+void FormInformation::cell_position(QModelIndex)
+{
+
+
+}
+
 
 FormInformation::~FormInformation()
 {
     delete ui;
 }
 
-void FormInformation::loadFigureTable()
+void FormInformation::setLightFigure(int row, int col)
 {
-//    QSettings settings(SETTINGSFILE, QSettings::IniFormat);
-
-//    tableActive = false;
-//    Packet tempPacket;
-
-
-//    QList<Packet> packetsSavedFiltered;
-//    packetsSavedFiltered.clear();
-
-    //QString filterString = ui->searchLineEdit->text().toLower().trimmed();
-
-
-//    foreach (tempPacket, packetsSaved) {
-
-//        if (tempPacket.name.toLower().contains(filterString) ||
-//            tempPacket.hexToASCII(tempPacket.hexString).toLower().contains(filterString) ||
-//            tempPacket.toIP.toLower().contains(filterString) ||
-//            QString::number(tempPacket.port).contains(filterString)
-//            ) {
-//            packetsSavedFiltered.append(tempPacket);
-//            continue;
-//        }
-//    }
-
-    //QDEBUGVAR(packetsSavedFiltered.size());
-
-
-
-    figureTableHeaders  = Settings::defaultPacketTableHeader();
-    ui->tableWidget->clear();
-
-    ui->tableWidget->setColumnCount(figureTableHeaders.size());
-
-    ui->tableWidget->verticalHeader()->show();
-    ui->tableWidget->horizontalHeader()->show();
-    ui->tableWidget->setHorizontalHeaderLabels(figureTableHeaders);
-    ui->tableWidget->resizeColumnsToContents();
-    ui->tableWidget->resizeRowsToContents();
-    ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+    qDebug()<<"void FormInformation::setLightFigure(int row, int col)";
+    Q_UNUSED(col);
+    FigureViewButton* pb = qobject_cast<FigureViewButton*>(tInfo->cellWidget(row,5));
+    if(pb==nullptr)return;
+    emit setColotFigure(pb->finfo.Id);
 
 }
 
-FigureViewButton* FormInformation::getFigureButton(QTableWidget * parent)
-{
-
-}
 
 QIcon FormInformation::getIcon(QString name)
 {
@@ -91,9 +65,9 @@ QIcon FormInformation::getIcon(QString name)
 
 void FormInformation::ViewHideFigure(figureInfo f)
 {
-      //ui->tableWidget->removeRow(f.row);
+      //tInfo->removeRow(f.row);
     qDebug()<<"visible: "<<f.Id;
-    FigureViewButton* pb = qobject_cast<FigureViewButton*>(ui->tableWidget->cellWidget(f.row,4));
+    FigureViewButton* pb = qobject_cast<FigureViewButton*>(tInfo->cellWidget(f.row,4));
     if(pb==nullptr)return;
     pb->finfo.visible=!pb->finfo.visible;
     pb->setLabel();
@@ -107,10 +81,10 @@ void FormInformation::DeleteFigure(figureInfo f)
 {
     qDebug()<<"old Id: "<<f.Id<<"; "<<f.row;
     //QMessageBox::information(nullptr,"","Показать фигуру");
-    ui->tableWidget->removeRow(f.row);
-    ui->tableWidget->update();
-    if(ui->tableWidget->rowCount()==0)return;
-    FigureViewButton* pb = qobject_cast<FigureViewButton*>(ui->tableWidget->cellWidget(f.row,5));
+    tInfo->removeRow(f.row);
+    tInfo->update();
+    if(tInfo->rowCount()==0)return;
+    FigureViewButton* pb = qobject_cast<FigureViewButton*>(tInfo->cellWidget(f.row,5));
     if(pb==nullptr)return;
     //pb->finfo.Id;
     qDebug()<<"action: "<<pb->getAction()<<"Id: "<<pb->finfo.Id<<"; "<<pb->finfo.row;
@@ -119,45 +93,46 @@ void FormInformation::DeleteFigure(figureInfo f)
 
 void FormInformation::setRowTableRow(int Id, QString type, qreal x, qreal y, qreal width, qreal height)
 {
-    int rowCounter=ui->tableWidget->rowCount()-1;
-    ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
-
-
+    int rowCounter=tInfo->rowCount()-1;
+    tInfo->setRowCount(tInfo->rowCount()+1);
     QTableWidgetItem * tItem;
-    //ui->tableWidget->setr
-
-
 
     // кнопка видимости фигуры в таблице
-    FigureViewButton * figureViewButton = new FigureViewButton(Settings::View, ui->tableWidget);//getFigureButton();//ui->tableWidget);
+    FigureViewButton * figureViewButton = new FigureViewButton(Settings::View, tInfo);//getFigureButton();//tInfo);
     figureViewButton->setDataFigure(rowCounter,Id,type,x,y,width,height);
     connect(figureViewButton, SIGNAL(ViewHide(figureInfo)),
             this, SLOT(ViewHideFigure(figureInfo)));
-    ui->tableWidget->setCellWidget(rowCounter, figureTableHeaders.indexOf(Settings::View), figureViewButton);
+    //tInfo->setCellWidget(rowCounter, figureTableHeaders.indexOf(Settings::View), figureViewButton);
+    tInfo->setCellWidget(rowCounter, 4, figureViewButton);
 
     // кнопка удаления в таблице
-    FigureViewButton * figureHideButton = new FigureViewButton(Settings::Hide, ui->tableWidget);//getFigureButton();//ui->tableWidget);
+    FigureViewButton * figureHideButton = new FigureViewButton(Settings::Hide, tInfo);//getFigureButton();//tInfo);
     figureHideButton->setDataFigure(rowCounter,Id,type,x,y,width,height);
     connect(figureHideButton, SIGNAL(DeleteFig(figureInfo)),
             this, SLOT(DeleteFigure(figureInfo)));
-    ui->tableWidget->setCellWidget(rowCounter, figureTableHeaders.indexOf(Settings::Hide), figureHideButton);
+    //tInfo->setCellWidget(rowCounter, figureTableHeaders.indexOf(Settings::Hide), figureHideButton);
+    tInfo->setCellWidget(rowCounter, 5, figureHideButton);
 
     // position
     tItem = new QTableWidgetItem(figureHideButton->getPosition());
-    ui->tableWidget->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Position), tItem);
+    //tInfo->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Position), tItem);
+    tInfo->setItem(rowCounter, 3, tItem);
 
 
     //region
     tItem = new QTableWidgetItem(figureHideButton->getRegion());
-    ui->tableWidget->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Region), tItem);
+    //tInfo->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Region), tItem);
+    tInfo->setItem(rowCounter, 2, tItem);
 
     //type
     tItem = new QTableWidgetItem(figureHideButton->getType());
-    ui->tableWidget->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Type), tItem);
+    //tInfo->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Type), tItem);
+    tInfo->setItem(rowCounter, 1, tItem);
 
     //Id
     tItem = new QTableWidgetItem(figureHideButton->getId());
-    ui->tableWidget->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Id), tItem);
+    //tInfo->setItem(rowCounter, figureTableHeaders.indexOf(Settings::Id), tItem);
+    tInfo->setItem(rowCounter, 0, tItem);
 
 
 }

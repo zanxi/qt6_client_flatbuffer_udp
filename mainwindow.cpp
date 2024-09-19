@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(draw, &FormDrawing::signal_to_info, this, &MainWindow::slot_to_FigureInfo);
     connect(infotab, &FormInformation::deleteFig, this, &MainWindow::slot_to_FigureDraw_delete);
     connect(infotab, &FormInformation::hideFigure, this, &MainWindow::slot_to_FigureDraw_Visible);
+    connect(infotab, &FormInformation::setColotFigure,this, &MainWindow::setColotFigure);
 
     //connect(infotab, &FormInformation::signal_to_draw_visiblebledelete, this, &MainWindow::slot_to_FigureDraw_Visible);
 
@@ -52,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,this,&MainWindow::onTimerUpdate);
-    timer->start(200);
+    timer->start(100);
 
 
 }
@@ -84,6 +85,12 @@ void MainWindow::slot_to_FigureInfo(figureInfo f)
     //infotab->
     //infotab->seti;
     //QMessageBox::information(this,"Спасибо","Информация о фигуре получена");
+}
+
+void MainWindow::setColotFigure(int Id)
+{
+    draw->setColorFigure(Id);
+
 }
 
 void MainWindow::slot_to_FigureDraw_Visible(int Id)
@@ -127,7 +134,7 @@ void MainWindow::onTimerUpdate()
         }
     }
 
-    if(count>8)timer->stop();
+    if(count>12)timer->stop();
 
 
    // qDebug()<<"Figure №: "<<draw->getCountFigure();

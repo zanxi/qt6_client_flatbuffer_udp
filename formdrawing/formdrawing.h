@@ -39,6 +39,7 @@ public:
 
     void ViewHide(int);
     void DeleteFigure(int Id);
+    void setColorFigure(int Id);
 
 public slots:
     void addFigure(QString type);

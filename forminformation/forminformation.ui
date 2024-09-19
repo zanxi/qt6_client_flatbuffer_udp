@@ -13,40 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QTableWidget" name="tableWidget">
-     <column>
-      <property name="text">
-       <string>ID</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Type</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Position(X,Y)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Region(Width, Height)</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>View</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Erase</string>
-      </property>
-     </column>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout"/>
    </item>
   </layout>
  </widget>

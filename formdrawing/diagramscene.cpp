@@ -26,6 +26,7 @@ void DiagramScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     clearSelection();
     QGraphicsScene::mousePressEvent(event);
 
+
     }
     else if(Qt::RightButton==event->button())
     {
